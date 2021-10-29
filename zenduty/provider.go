@@ -1,36 +1,62 @@
 package zenduty
 
 import (
-	"context"
 	"terraform-provider-zenduty/client"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 // Provider -
 // Provider -
-func Provider() *schema.Provider {
+// func Provider() *schema.Provider {
+// 	return &schema.Provider{
+// 		Schema: map[string]*schema.Schema{
+// 			"token": &schema.Schema{
+// 				Type:        schema.TypeString,
+// 				Optional:    true,
+// 				DefaultFunc: schema.EnvDefaultFunc("ddd", nil),
+// 			},
+// 		},
+// 		ResourcesMap: map[string]*schema.Resource{
+// 			"team": resourceTeam(),
+// 		},
+// 		ConfigureFunc: providerConfigure(),
+// 	}
+// }
+
+// // re
+// func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+// 	token := d.Get("token").(string)
+
+// 	// Warning or errors can be collected in a slice type
+
+// 	c := client.NewClient(token)
+
+// 	return c, nil
+// }
+
+func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"token": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("HASHICUPS_USERNAME", nil),
+				Description: "Your Todoist API key",
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("TODOIST_API_KEY", nil),
 			},
 		},
-		ConfigureContextFunc: providerConfigure,
+		ResourcesMap: map[string]*schema.Resource{
+			"team": resourceTeam(),
+		},
+		ConfigureFunc: configureFunc(),
 	}
 }
 
-// re
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	token := d.Get("token").(string)
-
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
-
-	c := client.NewClient(token)
-
-	return c, diags
+func configureFunc() func(*schema.ResourceData) (interface{}, error) {
+	return func(d *schema.ResourceData) (interface{}, error) {
+		client := client.NewClient(d.Get("api_key").(string))
+		return client, nil
+	}
 }

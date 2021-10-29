@@ -1,0 +1,99 @@
+// package zenduty
+
+// import (
+// 	"terraform-provider-zenduty/client"
+
+// 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+// )
+
+// func resourceTodoistTask() *schema.Resource {
+// 	return &schema.Resource{
+// 		Schema: map[string]*schema.Schema{
+// 			"escalation_policy": &schema.Schema{
+// 				Type: schema.TypeMap,
+// 				// Elem: &schema.Resource{
+// 				// 	Schema: map[string]*schema.Schema{
+// 				// 		"name": &schema.Schema{
+// 				// 			Type: schema.TypeString,
+// 				// 		},
+// 				// 		"summary": &schema.Schema{
+// 				// 			Type: schema.TypeString,
+// 				// 		},
+// 				// 		"description": &schema.Schema{
+
+// 				// 			Type: schema.TypeString,
+// 				// 		},
+// 				// 		"unique_id": &schema.Schema{
+// 				// 			Type: schema.TypeString,
+// 				// 		},
+// 				// 		"repeat_policy": &schema.Schema{
+// 				// 			Type: schema.TypeInt,
+// 				// 		},
+// 				// 		"move_to_next": &schema.Schema{
+// 				// 			Type: schema.TypeBool,
+// 				// 		},
+// 				// 		"global_ep": &schema.Schema{
+// 				// 			Type: schema.TypeBool,
+// 				// 		},
+// 				// 	},
+// 				// },
+// 			},
+// 			"team": &schema.Schema{
+// 				Type: schema.TypeMap,
+// 			},
+// 			"users": &schema.Schema{
+// 				Type: schema.TypeList,
+// 				Elem: &schema.Resource{
+// 					Schema: map[string]*schema.Schema{
+// 						"username": &schema.Schema{
+// 							Type: schema.TypeString,
+// 						},
+// 						"first_name": &schema.Schema{
+// 							Type: schema.TypeString,
+// 						},
+// 						"last_name": &schema.Schema{
+// 							Type: schema.TypeString,
+// 						},
+// 					},
+// 				},
+// 			},
+// 		},
+// 		Create: resourceTodoistTaskCreate,
+// 	}
+// }
+
+// func resourceTodoistTaskCreate(d *schema.ResourceData, meta interface{}) error {
+// 	client := meta.(*client.Client)
+
+// 	escalation_policy := d.Get("escalation_policy").(map[string]interface{})
+// 	team := d.Get("team").(map[string]interface{})
+// 	users := d.Get("users").([]interface{})
+
+// 	task := Task{
+// 		EscalationPolicy: EscalationPolicy{
+// 			ID: escalation_policy["id"].(string),
+// 		},
+// 		Team: Team{
+// 			ID: team["id"].(string),
+// 		},
+// 		Users: []User{},
+// 	}
+
+// 	for _, user := range users {
+// 		user := user.(map[string]interface{})
+// 		task.Users = append(task.Users, User{
+// 			Username:  user["username"].(string),
+// 			FirstName: user["first_name"].(string),
+// 			LastName:  user["last_name"].(string),
+// 		})
+// 	}
+
+// 	task, err := client.CreateTask(task)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	d.SetId(task.ID)
+
+// 	return resourceTodoistTaskRead(d, meta)
+// }
