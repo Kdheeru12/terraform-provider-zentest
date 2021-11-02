@@ -8,15 +8,26 @@ import (
 	"net/http"
 )
 
+// func main() {
+// 	client := Client{Token: "ddddd"}
+// 	newteam := &Team{}
+// 	newteam.Name = "hello"
+
+// 	task, err := client.CreateTeam(newteam)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(task)
+
+// }
+
 type Client struct {
-	HttpClient *http.Client
-	Token      string
+	Token string
 }
 
 func NewClient(token string) *Client {
 	return &Client{
-		HttpClient: http.DefaultClient,
-		Token:      token,
+		Token: token,
 	}
 }
 
@@ -44,7 +55,6 @@ func NewClient(token string) *Client {
 // 	Team             Team             `json:"team"`
 // 	Users            []User           `json:"users"`
 // }
-
 type Team struct {
 	Unique_Id     string `json:"unique_id"`
 	Name          string `json:"name"`
@@ -54,29 +64,31 @@ type Team struct {
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
-	req.Header.Set("Authorization", "token "+c.Token)
-	resp, err := c.HttpClient.Do(req)
+	req.Header.Set("Authorization", fmt.Sprintf("token %s", c.Token))
+	client := &http.Client{}
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK || resp.StatusCode != http.StatusNoContent {
+	if res.StatusCode == http.StatusOK || res.StatusCode == http.StatusNoContent {
 		return body, err
 	} else {
-		return nil, fmt.Errorf("status: %d, body: %s", resp.StatusCode, body)
+		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
-}
 
+}
 func (c *Client) CreateTeam(team *Team) (*Team, error) {
 	j, err := json.Marshal(team)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", "https://www.zenduty.com/api/account/teams/", bytes.NewBuffer(j))
+	fmt.Printf("ddd")
+	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/", bytes.NewBuffer(j))
 	if err != nil {
 		return nil, err
 	}

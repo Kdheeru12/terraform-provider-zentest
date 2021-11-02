@@ -2,10 +2,7 @@ module terraform-provider-zenduty
 
 go 1.17
 
-require (
-	github.com/hashicorp/terraform-plugin-sdk v1.17.2
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
-)
+require github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
 
 require (
 	cloud.google.com/go v0.65.0 // indirect
@@ -41,6 +38,7 @@ require (
 	github.com/hashicorp/go-version v1.3.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.8.2 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.4.0 // indirect
+	github.com/hashicorp/terraform-plugin-sdk v1.17.2 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
