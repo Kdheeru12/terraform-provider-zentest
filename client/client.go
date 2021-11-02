@@ -9,11 +9,12 @@ import (
 )
 
 // func main() {
-// 	client := Client{Token: "ddddd"}
-// 	newteam := &Team{}
-// 	newteam.Name = "hello"
-
-// 	task, err := client.CreateTeam(newteam)
+// 	client := Client{Token: "0e2038520fca2fbd7f3d9aace062c4fe911be36b"}
+// 	newteam := &Roles{}
+// 	newteam.Title = "hello"
+// 	newteam.Description = "ddddd"
+// 	newteam.Unique_Id = ""
+// 	task, err := client.UpdateRoles("57cc5f4f-a785-4e98-8bae-4ef1ca148af5", newteam)
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
@@ -75,7 +76,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode == http.StatusOK || res.StatusCode == http.StatusNoContent {
+	if res.StatusCode == http.StatusOK || res.StatusCode == http.StatusCreated || res.StatusCode == http.StatusNoContent {
 		return body, err
 	} else {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
@@ -120,4 +121,87 @@ func (c *Client) GetTeam(uniqie_id string) (*Team, error) {
 		return nil, err
 	}
 	return &t, nil
+}
+
+type Roles struct {
+	Team          string `json:"team"`
+	Unique_Id     string `json:"unique_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	Creation_Date string `json:"creation_date"`
+	Rank          int    `json:"rank"`
+}
+
+func (c *Client) CreateRole(team string, role *Roles) (*Roles, error) {
+	j, err := json.Marshal(role)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/", bytes.NewBuffer(j))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	body, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var r Roles
+	err = json.Unmarshal(body, &r)
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (c *Client) GetRoles(team string) ([]Roles, error) {
+	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/", nil)
+	if err != nil {
+		return nil, err
+	}
+	body, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var r []Roles
+	err = json.Unmarshal(body, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (c *Client) UpdateRoles(team string, role *Roles) (*Roles, error) {
+	fmt.Println(team)
+	j, err := json.Marshal(role)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+"2d62f38a-67cf-45f3-bba8-8ef27b25d1e3"+"/", bytes.NewBuffer(j))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	body, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var r Roles
+	err = json.Unmarshal(body, &r)
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (c *Client) DeleteRole(team string, role string) error {
+	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+role, nil)
+	if err != nil {
+		return err
+	}
+	_, err = c.doRequest(req)
+	if err != nil {
+		return err
+	}
+	return nil
 }

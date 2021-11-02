@@ -66,8 +66,10 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"zenduty_team": resourceTeam(),
+			"zenduty_team":  resourceTeam(),
+			"zenduty_roles": resourceRoles(),
 		},
+
 		DataSourcesMap: map[string]*schema.Resource{
 			"zenduty_teams": resourceTeamData(),
 		},
@@ -92,7 +94,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Error,
-		Summary:  "Unable to create zenduty client",
+		Summary:  "Unable to create zenduty client provider",
 		Detail:   "Unable to auth user for authenticated zenduty client",
 	})
 

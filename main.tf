@@ -13,9 +13,17 @@ provider "zenduty" {
   
 }
 
-resource "zenduty_team" "team" {
-    name = "testprovider"
+resource "zenduty_roles" "test5" {
+  team = "510fca1c-4d29-430a-a164-adcbf1e455f1"
+  title = "updateds"
+  description = "hello"
 }
+
+
+
+
+
+
 
 # data "zenduty_teams" "all" {
 #     name = "ff84fab4-dc13-4b89-a00e-5c19ce82d943"
