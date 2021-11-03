@@ -76,6 +76,9 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 	if v, ok := d.GetOk("title"); ok {
 		newrole.Title = v.(string)
 	}
+	if v, ok := d.GetOk("rank"); ok {
+		newrole.Rank = v.(int)
+	}
 
 	role, err := apiclient.CreateRole(newrole.Team, newrole)
 	if err != nil {

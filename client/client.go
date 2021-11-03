@@ -10,15 +10,11 @@ import (
 
 // func main() {
 // 	client := Client{Token: "0e2038520fca2fbd7f3d9aace062c4fe911be36b"}
-// 	newteam := &Roles{}
-// 	newteam.Title = "hello"
-// 	newteam.Description = "ddddd"
-// 	newteam.Unique_Id = ""
-// 	task, err := client.UpdateRoles("57cc5f4f-a785-4e98-8bae-4ef1ca148af5", newteam)
+// 	task, err := client.GetRoles("510fca1c-4d29-430a-a164-adcbf1e455f1")
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
-// 	fmt.Println(task)
+// 	fmt.Printf("%+v\n", task)
 
 // }
 
