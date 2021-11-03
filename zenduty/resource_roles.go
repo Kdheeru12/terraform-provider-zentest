@@ -68,6 +68,7 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 		newrole.Team = v.(string)
 
 	}
+	d.Set("team", newrole.Team)
 	if v, ok := d.GetOk("description"); ok {
 		newrole.Description = v.(string)
 
@@ -81,14 +82,13 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.FromErr(err)
 	}
 	d.SetId(role.Unique_Id)
-	d.Set("team", role.Team)
 	return diags
 }
 
 func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiclient := m.(*client.Client)
 	newrole := &client.Roles{}
-	team_id := d.Get("team").(string)
+	var team_id string
 	id := d.Id()
 	newrole.Unique_Id = id
 	var diags diag.Diagnostics
@@ -99,10 +99,13 @@ func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 	if v, ok := d.GetOk("title"); ok {
 		newrole.Title = v.(string)
 	}
+	if v, ok := d.GetOk("team"); ok {
+		team_id = v.(string)
+	}
 	// diags = append(diags, diag.Diagnostic{
 	// 	Severity: diag.Error,
 	// 	Summary:  "Unable to update zenduty client",
-	// 	Detail:   newrole.Title + " " + newrole.Description + " " + newrole.Unique_Id,
+	// 	Detail:   newrole.Title + " " + newrole.Description + " " + newrole.Unique_Id + " " + team_id,
 	// })
 	_, err := apiclient.UpdateRoles(team_id, newrole)
 	if err != nil {

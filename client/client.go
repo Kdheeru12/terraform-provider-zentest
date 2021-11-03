@@ -172,12 +172,11 @@ func (c *Client) GetRoles(team string) ([]Roles, error) {
 }
 
 func (c *Client) UpdateRoles(team string, role *Roles) (*Roles, error) {
-	fmt.Println(team)
 	j, err := json.Marshal(role)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+"2d62f38a-67cf-45f3-bba8-8ef27b25d1e3"+"/", bytes.NewBuffer(j))
+	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+role.Unique_Id+"/", bytes.NewBuffer(j))
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +194,7 @@ func (c *Client) UpdateRoles(team string, role *Roles) (*Roles, error) {
 }
 
 func (c *Client) DeleteRole(team string, role string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+role, nil)
+	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/roles/"+role+"/", nil)
 	if err != nil {
 		return err
 	}

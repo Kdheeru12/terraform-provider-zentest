@@ -13,23 +13,19 @@ provider "zenduty" {
   
 }
 
-resource "zenduty_roles" "test5" {
-  team = "510fca1c-4d29-430a-a164-adcbf1e455f1"
-  title = "updateds"
-  description = "hello"
-}
+# resource "zenduty_roles" "testing" {
+#   team= "510fca1c-4d29-430a-a164-adcbf1e455f1"
+#   title = "News updated"
+#   description = "This is the description for the new Role"
 
+# }
 
+# resource "zenduty_roles" "testinge" {
+#   team= "510fca1c-4d29-430a-a164-adcbf1e455f1"
+#   title = "News delete"
+#   description = "This is the description for the new Role"
 
-
-
-
-
-# data "zenduty_teams" "all" {
-#     name = "ff84fab4-dc13-4b89-a00e-5c19ce82d943"
 # }
 
 
-# output "all_teams" {
-#   value = data.zenduty_teams.all
-# }
+
