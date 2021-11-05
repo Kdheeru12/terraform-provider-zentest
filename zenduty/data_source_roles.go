@@ -11,6 +11,7 @@ import (
 func dataSourceRoles() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceOrderRead,
+
 		Schema: map[string]*schema.Schema{
 			"team_id": {
 				Type:     schema.TypeString,

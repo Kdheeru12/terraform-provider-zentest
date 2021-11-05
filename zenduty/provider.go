@@ -71,8 +71,9 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"zenduty_teams": resourceTeamData(),
-			"zenduty_roles": dataSourceRoles(),
+			"zenduty_teams":     resourceTeamData(),
+			"zenduty_roles":     dataSourceRoles(),
+			"zenduty_incidents": dataSourceIncidents(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

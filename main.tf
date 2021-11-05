@@ -27,14 +27,24 @@ resource "zenduty_roles" "rank_test" {
   rank = 10
 }
 
-data "zenduty_roles" "roles" {
-  team_id = "510fca1c-4d29-430a-a164-adcbf1e455f1"
-}
+# data "zenduty_roles" "roles" {
+#   team_id = "510fca1c-4d29-430a-a164-adcbf1e455f1"
+# }
 
+# output "roles" {
+#   value = data.zenduty_roles.roles
+  
+# }
+
+data "zenduty_incidents" "incidents"{
+
+}
 output "roles" {
-  value = data.zenduty_roles.roles
+  value = data.zenduty_incidents.incidents
   
 }
+
+
 
 
 
