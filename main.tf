@@ -51,16 +51,21 @@ resource "zenduty_roles" "test" {
   
 # }
 
-data "zenduty_teams" "teams"{
-}
-output "teams" {
-  value = data.zenduty_teams.teams
+# data "zenduty_teams" "teams"{
+#   team_id = "f212685d-4268-49c5-9009-9069f58cfcbd"
+# }
+# output "teams" {
+#   value = data.zenduty_teams.teams
   
-}
+# }
 
-resource "zenduty_team" "team1"{
-  name = "teams"
-}
+# resource "zenduty_services" "service1" {
+#   name = "terraform delete"
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   description = "This is the description for the new Service"
+#   escalation_policy = "86d2d574-0027-4593-acfa-7830c9a69dd6"
+
+# }
 
 
 
