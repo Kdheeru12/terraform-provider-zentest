@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "zenduty" {
-    token = "0e2038520fca2fbd7f3d9aace062c4fe911be36b"
+    token = "3b44da5b6cc076b459c45a6256b2e0e8b03af91c"
   
 }
 
@@ -27,6 +27,13 @@ resource "zenduty_roles" "rank_test" {
   rank = 10
 }
 
+resource "zenduty_roles" "test" {
+  team= "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+  title = "crud"
+  description = "T is the description for the new Role"
+  rank = 10
+}
+
 # data "zenduty_roles" "roles" {
 #   team_id = "510fca1c-4d29-430a-a164-adcbf1e455f1"
 # }
@@ -36,13 +43,26 @@ resource "zenduty_roles" "rank_test" {
   
 # }
 
-data "zenduty_incidents" "incidents"{
+# data "zenduty_incidents" "incidents"{
 
+# }
+# output "roles" {
+#   value = data.zenduty_incidents.incidents
+  
+# }
+
+data "zenduty_teams" "teams"{
 }
-output "roles" {
-  value = data.zenduty_incidents.incidents
+output "teams" {
+  value = data.zenduty_teams.teams
   
 }
+
+resource "zenduty_team" "team1"{
+  name = "teams"
+}
+
+
 
 
 

@@ -9,8 +9,8 @@ import (
 )
 
 // func main() {
-// 	client := Client{Token: "0e2038520fca2fbd7f3d9aace062c4fe911be36b"}
-// 	task, err := client.GetIncidentByNumber("80")
+// 	client := Client{Token: "3b44da5b6cc076b459c45a6256b2e0e8b03af91c"}
+// 	task, err := client.GetTeams()
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
@@ -41,23 +41,34 @@ func NewClient(token string) *Client {
 // 	Uniqie_Id string `json:"unique_id"`
 // 	Name      string `json:"name"`
 // }
-// type User struct {
-// 	Username   string `json:"username"`
-// 	First_Name string `json:"first_name"`
-// 	Last_Name  string `json:"last_name"`
-// }
+type user struct {
+	Username   string `json:"username"`
+	First_Name string `json:"first_name"`
+	Last_Name  string `json:"last_name"`
+	Email      string `json:"email"`
+}
 
 // type OnCall struct {
 // 	EscalationPolicy EscalationPolicy `json:"escalation_policy"`
 // 	Team             Team             `json:"team"`
 // 	Users            []User           `json:"users"`
 // }
+
+type members struct {
+	Unique_Id    string `json:"unique_id"`
+	Team         string `json:"team"`
+	User         user   `json:"user"`
+	Joining_Date string `json:"joining_date"`
+	Role         int    `json:"role"`
+}
 type Team struct {
-	Unique_Id     string `json:"unique_id"`
-	Name          string `json:"name"`
-	Account       string `json:"account"`
-	Creation_Date string `json:"creation_date"`
-	Owner         string `json:"owner"`
+	Unique_Id     string    `json:"unique_id"`
+	Name          string    `json:"name"`
+	Account       string    `json:"account"`
+	Creation_Date string    `json:"creation_date"`
+	Owner         string    `json:"owner"`
+	Roles         []Roles   `json:"roles"`
+	Members       []members `json:"members"`
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
@@ -102,8 +113,8 @@ func (c *Client) CreateTeam(team *Team) (*Team, error) {
 	return &t, nil
 }
 
-func (c *Client) GetTeam(uniqie_id string) (*Team, error) {
-	req, err := http.NewRequest("GET", "https://www.zenduty.com/api/account/teams/"+uniqie_id, nil)
+func (c *Client) GetTeamById(uniqie_id string) (*Team, error) {
+	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+uniqie_id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +128,36 @@ func (c *Client) GetTeam(uniqie_id string) (*Team, error) {
 		return nil, err
 	}
 	return &t, nil
+}
+
+func (c *Client) GetTeams() ([]Team, error) {
+	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/", nil)
+	if err != nil {
+		return nil, err
+	}
+	body, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var t []Team
+	err = json.Unmarshal(body, &t)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (c *Client) DeleteTeam(id string) error {
+	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+id+"/", nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	_, err = c.doRequest(req)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type Roles struct {

@@ -59,11 +59,6 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 	newrole := &client.Roles{}
 
 	var diags diag.Diagnostics
-	// diags = append(diags, diag.Diagnostic{
-	// 	Severity: diag.Error,
-	// 	Summary:  "Unable to create zenduty client",
-	// 	Detail:   "Unable to auth user for authenticated zenduty client",
-	// })
 	if v, ok := d.GetOk("team"); ok {
 		newrole.Team = v.(string)
 
@@ -105,11 +100,6 @@ func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 	if v, ok := d.GetOk("team"); ok {
 		team_id = v.(string)
 	}
-	// diags = append(diags, diag.Diagnostic{
-	// 	Severity: diag.Error,
-	// 	Summary:  "Unable to update zenduty client",
-	// 	Detail:   newrole.Title + " " + newrole.Description + " " + newrole.Unique_Id + " " + team_id,
-	// })
 	_, err := apiclient.UpdateRoles(team_id, newrole)
 	if err != nil {
 		return diag.FromErr(err)

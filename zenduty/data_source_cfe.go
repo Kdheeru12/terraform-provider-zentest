@@ -179,7 +179,7 @@ func resourceTeamReads(ctx context.Context, d *schema.ResourceData, m interface{
 	id := d.Id()
 	var diags diag.Diagnostics
 
-	t, err := apiclient.GetTeam(id)
+	t, err := apiclient.GetTeamById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

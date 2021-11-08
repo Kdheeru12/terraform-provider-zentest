@@ -83,11 +83,6 @@ func resourceTeamCreate(ctx context.Context, d *schema.ResourceData, m interface
 	newteam := &client.Team{}
 
 	var diags diag.Diagnostics
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Error,
-		Summary:  "Unable to create zenduty client",
-		Detail:   "Unable to auth user for authenticated zenduty client",
-	})
 	if v, ok := d.GetOk("name"); ok {
 		newteam.Name = v.(string)
 
@@ -108,8 +103,13 @@ func resourceTeamUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceTeamDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-
+	apiclient := m.(*client.Client)
+	id := d.Id()
 	var diags diag.Diagnostics
+	err := apiclient.DeleteTeam(id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return diags
 }
 
@@ -118,14 +118,11 @@ func resourceTeamRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	id := d.Id()
 	var diags diag.Diagnostics
 
-	t, err := apiclient.GetTeam(id)
+	t, err := apiclient.GetTeamById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.Set("name", t.Name)
-	d.Set("unique_id", t.Unique_Id)
-	d.Set("creation_date", t.Creation_Date)
-	d.Set("account", t.Account)
-	d.Set("creation_date", t.Creation_Date)
+
 	return diags
 }
