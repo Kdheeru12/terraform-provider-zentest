@@ -28,6 +28,7 @@ func Provider() *schema.Provider {
 			"zenduty_teams":     dataSourceTeams(),
 			"zenduty_roles":     dataSourceRoles(),
 			"zenduty_incidents": dataSourceIncidents(),
+			"zenduty_services":  dataSourceServices(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

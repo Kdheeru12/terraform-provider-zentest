@@ -67,6 +67,15 @@ resource "zenduty_roles" "test" {
 
 # }
 
+# data "zenduty_services" "services"{
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   id = "e6618036-56a7-4e84-980e-f15ac027d556"
+# }
+
+# output "services" {
+#   value = data.zenduty_services.services
+  
+# }
 
 
 

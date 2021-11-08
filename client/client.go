@@ -405,7 +405,7 @@ func (c *Client) CreateService(team string, service *Services) (*Services, error
 	return &i, nil
 }
 
-func (c *Client) GetServices(team string) (*[]Services, error) {
+func (c *Client) GetServices(team string) ([]Services, error) {
 	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/", nil)
 	if err != nil {
 		return nil, err
@@ -419,7 +419,7 @@ func (c *Client) GetServices(team string) (*[]Services, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &i, nil
+	return i, nil
 }
 
 func (c *Client) GetServicesById(team, id string) (*Services, error) {
