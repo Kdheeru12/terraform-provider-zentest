@@ -10,7 +10,7 @@ import (
 
 // func main() {
 // 	client := Client{Token: "3b44da5b6cc076b459c45a6256b2e0e8b03af91c"}
-// 	task, err := client.GetIntegrationByID("dd518f4d-dbce-4ad2-b5be-ceff597c67f8", "e6618036-56a7-4e84-980e-f15ac027d556", "2c20a676-fba2-40e7-aa83-8235d7972b8d")
+// 	task, err := client.GetIntegrations("dd518f4d-dbce-4ad2-b5be-ceff597c67f8", "e6618036-56a7-4e84-980e-f15ac027d556")
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
@@ -492,6 +492,7 @@ type Integration struct {
 	Summary               string               `json:"summary"`
 	Description           string               `json:"description"`
 	Unique_Id             string               `json:"unique_id"`
+	Service               string               `json:"service"`
 	Application           string               `json:"application"`
 	Application_Reference ApplicationReference `json:"application_reference"`
 	Integration_key       string               `json:"integration_key"`
