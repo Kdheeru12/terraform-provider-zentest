@@ -96,15 +96,22 @@ resource "zenduty_roles" "test" {
   
 # }
 
-# resource "zenduty_schedules" "name" {
-#   name = "terraform delete"
-#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
-#   time_zone = "Asia/Kolkata"
+resource "zenduty_schedules" "name" {
+  name = "terraform delete"
+  team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+  time_zone = "Asia/Kolkata"
   
-# }
+}
 
 
-
+data "zenduty_schedules" "schedules"{
+  team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+  schedule_id = "a5707ecf-5768-4123-8f05-1d6cf487b7b0"
+}
+output "schedules" {
+  value = data.zenduty_schedules.schedules
+  
+}
 
 
 
