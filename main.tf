@@ -104,14 +104,108 @@ resource "zenduty_schedules" "name" {
 }
 
 
+# data "zenduty_schedules" "schedules"{
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   schedule_id = "a5707ecf-5768-4123-8f05-1d6cf487b7b0"
+# }
+# output "schedules" {
+#   value = data.zenduty_schedules.schedules
+  
+# }
+
+
+
+# chain 
+
+resource "zenduty_team" "team1"{
+  name = "terraform chain"
+
+}
+
+resource "zenduty_services" "service1" {
+  name = "terraform chain"
+  team_id = zenduty_team.team1.id
+  description = "This is the description for the new Service"
+  escalation_policy = "5bb8cc73-13f9-4b8d-b96a-7a7d77e8c0e2"
+
+}
+resource "zenduty_integrations" "integration" {
+  team_id = zenduty_team.team1.id
+  service_id = zenduty_services.service1.id
+  application = "c9acbca3-75e0-44b5-a2c9-891918dd128b"
+  name = "terraform chain"
+  summary = "This is the summary for the new Integration"
+}
+
+
+resource "zenduty_schedules" "schedule1" {
+  name = "terraform chain"
+  team_id = zenduty_team.team1.id
+  time_zone = "Asia/Kolkata"
+  
+}
+
+resource "zenduty_roles" "role1" {
+  team= zenduty_team.team1.id
+  title = "terraform chain"
+  description = "T is the description for the new Role"
+  rank = 8
+}
+
+data "zenduty_teams" "team1"{
+  team_id = zenduty_team.team1.id
+}
+output "teams" {
+  value = data.zenduty_teams.team1
+}
+
+data "zenduty_services" "services"{
+  team_id = zenduty_team.team1.id
+  id = zenduty_services.service1.id
+}
+
+output "services" {
+  value = data.zenduty_services.services
+  
+}
+
+data "zenduty_integrations" "integrations"{
+  team_id = zenduty_team.team1.id
+  service_id = zenduty_services.service1.id
+  integration_id = zenduty_integrations.integration.id
+}
+
+output "integrations" {
+  value = data.zenduty_integrations.integrations
+  
+}
+
+
 data "zenduty_schedules" "schedules"{
-  team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
-  schedule_id = "a5707ecf-5768-4123-8f05-1d6cf487b7b0"
+  team_id = zenduty_team.team1.id
+  schedule_id = zenduty_schedules.schedule1.id
 }
 output "schedules" {
   value = data.zenduty_schedules.schedules
   
 }
+
+data "zenduty_roles" "roles" {
+  team_id = zenduty_team.team1.id
+}
+
+output "roles" {
+  value = data.zenduty_roles.roles
+  
+}
+
+
+
+
+
+
+
+
 
 
 
