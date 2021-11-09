@@ -85,16 +85,23 @@ resource "zenduty_roles" "test" {
 #   summary = "This is the summary for the new Integration"
 # }
 
-data "zenduty_integrations" "integrations"{
-  team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
-  service_id = "e6618036-56a7-4e84-980e-f15ac027d556"
-  integration_id = "2c20a676-fba2-40e7-aa83-8235d7972b8d"
-}
+# data "zenduty_integrations" "integrations"{
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   service_id = "e6618036-56a7-4e84-980e-f15ac027d556"
+#   integration_id = "2c20a676-fba2-40e7-aa83-8235d7972b8d"
+# }
 
-output "integrations" {
-  value = data.zenduty_integrations.integrations
+# output "integrations" {
+#   value = data.zenduty_integrations.integrations
   
-}
+# }
+
+# resource "zenduty_schedules" "name" {
+#   name = "terraform delete"
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   time_zone = "Asia/Kolkata"
+  
+# }
 
 
 
