@@ -5,6 +5,6 @@ provider "terraform.zenduty1.com/zenduty1corp/zenduty1" {
   version     = "1.0.0"
   constraints = ">= 1.0.0"
   hashes = [
-    "h1:5WZS85hxdEpRsSsePn1EUjrKI8wON+5qiQJcwVPkNNk=",
+    "h1:9eRYb4j3iNF29vPg0M0GV39rIaIdE0Vv7PTHlbDIhUU=",
   ]
 }

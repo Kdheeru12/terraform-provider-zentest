@@ -77,6 +77,13 @@ resource "zenduty_roles" "test" {
   
 # }
 
+# resource "zenduty_integrations" "integration" {
+#   team_id = "dd518f4d-dbce-4ad2-b5be-ceff597c67f8"
+#   service_id = "e6618036-56a7-4e84-980e-f15ac027d556"
+#   application = "c9acbca3-75e0-44b5-a2c9-891918dd128b"
+#   name = "terraformd"
+#   summary = "This is the summary for the new Integration"
+# }
 
 
 

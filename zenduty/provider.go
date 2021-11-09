@@ -19,9 +19,10 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"zenduty_team":     resourceTeam(),
-			"zenduty_roles":    resourceRoles(),
-			"zenduty_services": resourceServices(),
+			"zenduty_team":         resourceTeam(),
+			"zenduty_roles":        resourceRoles(),
+			"zenduty_services":     resourceServices(),
+			"zenduty_integrations": resourceIntegrations(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
