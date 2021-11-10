@@ -152,53 +152,72 @@ resource "zenduty_roles" "role1" {
   rank = 8
 }
 
-data "zenduty_teams" "team1"{
-  team_id = zenduty_team.team1.id
-}
-output "teams" {
-  value = data.zenduty_teams.team1
-}
+# data "zenduty_teams" "team1"{
+#   team_id = zenduty_team.team1.id
+# }
+# output "teams" {
+#   value = data.zenduty_teams.team1
+# }
 
-data "zenduty_services" "services"{
-  team_id = zenduty_team.team1.id
-  id = zenduty_services.service1.id
-}
+# data "zenduty_services" "services"{
+#   team_id = zenduty_team.team1.id
+#   id = zenduty_services.service1.id
+# }
 
-output "services" {
-  value = data.zenduty_services.services
+# output "services" {
+#   value = data.zenduty_services.services
   
-}
+# }
 
-data "zenduty_integrations" "integrations"{
-  team_id = zenduty_team.team1.id
-  service_id = zenduty_services.service1.id
-  integration_id = zenduty_integrations.integration.id
-}
+# data "zenduty_integrations" "integrations"{
+#   team_id = zenduty_team.team1.id
+#   service_id = zenduty_services.service1.id
+#   integration_id = zenduty_integrations.integration.id
+# }
 
-output "integrations" {
-  value = data.zenduty_integrations.integrations
+# output "integrations" {
+#   value = data.zenduty_integrations.integrations
   
-}
+# }
 
 
-data "zenduty_schedules" "schedules"{
-  team_id = zenduty_team.team1.id
-  schedule_id = zenduty_schedules.schedule1.id
-}
-output "schedules" {
-  value = data.zenduty_schedules.schedules
+# data "zenduty_schedules" "schedules"{
+#   team_id = zenduty_team.team1.id
+#   schedule_id = zenduty_schedules.schedule1.id
+# }
+# output "schedules" {
+#   value = data.zenduty_schedules.schedules
   
-}
+# }
 
-data "zenduty_roles" "roles" {
-  team_id = zenduty_team.team1.id
-}
+# data "zenduty_roles" "roles" {
+#   team_id = zenduty_team.team1.id
+# }
 
-output "roles" {
-  value = data.zenduty_roles.roles
+# output "roles" {
+#   value = data.zenduty_roles.roles
   
-}
+# }
 
+
+# resource "zenduty_esp" "esp1" {
+#   name = "terraform_delete"
+#   team_id = zenduty_team.team1.id
+#   summary = "This is the summary for the new ESP"
+#   description = "This is the description for the new ESP"
+#   rules {
+#     delay = 0
+#     targets {
+#       target_type = 2
+#       target_id ="50012040-37db-4594-a268-a"
+#     }
+#     position = 0
+#     unique_id = "295958ad-945b-40b4-abb6-56af4f98f626"
+#   }
+#   repeat_policy = 3
+#   move_to_next = true
+  
+# }
 
 
 
