@@ -34,6 +34,7 @@ func Provider() *schema.Provider {
 			"zenduty_services":     dataSourceServices(),
 			"zenduty_integrations": dataSourceIntegrations(),
 			"zenduty_schedules":    dataSourceSchedules(),
+			"zenduty_esp":          dataSourceEsp(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

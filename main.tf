@@ -219,6 +219,14 @@ resource "zenduty_roles" "role1" {
   
 # }
 
+# data "zenduty_esp" "esp1" {
+#   team_id = zenduty_team.team1.id
+#   # esp_id = "5bb8cc73-13f9-4b8d-b96a-7a7d77e8c0e2"
+# }
+
+# output "esp1" {
+#   value = data.zenduty_esp.esp1
+# }
 
 
 
