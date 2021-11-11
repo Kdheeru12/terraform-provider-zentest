@@ -25,6 +25,7 @@ func Provider() *schema.Provider {
 			"zenduty_integrations": resourceIntegrations(),
 			"zenduty_schedules":    resourceSchedules(),
 			"zenduty_esp":          resourceEsp(),
+			"zenduty_incindents":   resourceIncidents(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
