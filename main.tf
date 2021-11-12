@@ -118,8 +118,7 @@ provider "zenduty" {
 # # chain 
 
 resource "zenduty_team" "team1"{
-  name = "terraforms"
-  description = "This is the description for the new Team test"
+  name = "terraforms update"
 
 }
 
@@ -219,11 +218,14 @@ resource "zenduty_schedules" "schedule1" {
   
 # # }
 
-# # data "zenduty_esp" "esp1" {
-# #   team_id = zenduty_team.team1.id
-# #   # esp_id = "5bb8cc73-13f9-4b8d-b96a-7a7d77e8c0e2"
-# # }
+# data "zenduty_esp" "esp1" {
+#   team_id = zenduty_team.team1.id
+#   # esp_id = "5bb8cc73-13f9-4b8d-b96a-7a7d77e8c0e2"
+# }
 
+# output "esp1" {
+#   value = data.zenduty_esp.esp1
+# }
 
 
 resource "zenduty_incindents" "incident1" {
@@ -232,8 +234,25 @@ resource "zenduty_incindents" "incident1" {
   title = "testing resolve"
   summary  = "This is the description for the new Incident"
   user = ""
+
 }
 
+# resource "zenduty_invite" "invites"{
+#   team = zenduty_team.team1.id
+#   email_accounts {
+#     email = "terraform1@gmail.com"
+#     first_name = "terraform"
+#     last_name = "test"
+#     role = 3
+#   }
+#   email_accounts {
+#     email = "terraform2@gmail.com"
+#     first_name = "terraform"
+#     last_name = "test"
+#     role = 3
+#   }
+
+# }
 
 
 

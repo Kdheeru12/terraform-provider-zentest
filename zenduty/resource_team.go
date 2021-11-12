@@ -30,50 +30,6 @@ func resourceTeam() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"unique_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"account": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"creation_date": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"members": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"unique_id": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"team": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"user": {
-							Type:     schema.TypeMap,
-							Optional: true,
-						},
-						"joining_date": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"role": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-					},
-				},
-			},
 		},
 	}
 }
@@ -96,8 +52,19 @@ func resourceTeamCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceTeamUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-
+	apiclient := m.(*client.Client)
+	newteam := &client.Team{}
+	id := d.Id()
+	newteam.Unique_Id = id
 	var diags diag.Diagnostics
+	if v, ok := d.GetOk("name"); ok {
+		newteam.Name = v.(string)
+
+	}
+	_, err := apiclient.UpdateTeam(id, newteam)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return diags
 
 }
