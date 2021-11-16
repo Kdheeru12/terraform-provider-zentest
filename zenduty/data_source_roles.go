@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -54,13 +53,13 @@ func dataSourceRoles() *schema.Resource {
 }
 
 func dataSourceOrderRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
 
 	var diags diag.Diagnostics
 
 	team_id := d.Get("team_id").(string)
 
-	roles, err := apiclient.GetRoles(team_id)
+	roles, err := apiclient.Roles.GetRoles(team_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -76,11 +75,7 @@ func dataSourceOrderRead(ctx context.Context, d *schema.ResourceData, m interfac
 		item["rank"] = role.Rank
 		items[i] = item
 	}
-	// diags = append(diags, diag.Diagnostic{
-	// 	Severity: diag.Error,
-	// 	Summary:  "Roles",
-	// 	Detail:   roles,
-	// })
+
 	if err := d.Set("items", items); err != nil {
 		return diag.FromErr(err)
 	}

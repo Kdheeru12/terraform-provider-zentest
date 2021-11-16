@@ -1,10 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
+	"fmt"
 )
+
+type IntegrationServerice service
 
 type ApplicationReference struct {
 	Name                string `json:"name"`
@@ -36,56 +37,43 @@ type Integration struct {
 	Default_Urgency       int                  `json:"default_urggency"`
 }
 
-func (c *Client) CreateIntegration(team string, service_id string, integration *Integration) (*Integration, error) {
-	j, err := json.Marshal(integration)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+service_id+"/integrations/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *IntegrationServerice) CreateIntegration(team string, service_id string, integration *Integration) (*Integration, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/integrations/", team, service_id)
+
+	body, err := c.client.newRequestDo("POST", path, integration)
 	if err != nil {
 		return nil, err
 	}
 	var i Integration
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) GetIntegrations(team, service_id string) ([]Integration, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+service_id+"/integrations/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *IntegrationServerice) GetIntegrations(team, service_id string) ([]Integration, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/integrations/", team, service_id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var i []Integration
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return i, nil
 }
 
-func (c *Client) GetIntegrationByID(team, service_id, id string) (*Integration, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+service_id+"/integrations/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *IntegrationServerice) GetIntegrationByID(team, service_id, id string) (*Integration, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/integrations/%s/", team, service_id, id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var i Integration
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}

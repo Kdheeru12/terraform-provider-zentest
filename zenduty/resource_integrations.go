@@ -41,7 +41,8 @@ func resourceIntegrations() *schema.Resource {
 }
 
 func resourceIntegrationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	newIntegration := &client.Integration{}
 	var diags diag.Diagnostics
 	team_id := d.Get("team_id").(string)
@@ -57,7 +58,7 @@ func resourceIntegrationCreate(ctx context.Context, d *schema.ResourceData, m in
 		newIntegration.Application = v.(string)
 	}
 
-	integration, err := apiclient.CreateIntegration(team_id, service_id, newIntegration)
+	integration, err := apiclient.Integrations.CreateIntegration(team_id, service_id, newIntegration)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -84,8 +85,9 @@ func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, m inte
 	id := d.Id()
 	team_id := d.Get("team_id").(string)
 	service_id := d.Get("service_id").(string)
-	apiclient := m.(*client.Client)
-	integration, err := apiclient.GetIntegrationByID(team_id, service_id, id)
+	apiclient, _ := m.(*Config).Client()
+
+	integration, err := apiclient.Integrations.GetIntegrationByID(team_id, service_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

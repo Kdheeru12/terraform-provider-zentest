@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,8 +46,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	token := d.Get("token").(string)
 	var diags diag.Diagnostics
 	if token != "" {
-		client := client.NewClient(token)
-		return client, diags
+		client := Config{
+			Token: token,
+		}
+		return &client, diags
 	}
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Error,

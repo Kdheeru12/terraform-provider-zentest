@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -112,12 +111,12 @@ func dataSourceTeams() *schema.Resource {
 }
 
 func dataSourceTeamReads(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
 
 	team_id := d.Get("team_id").(string)
 	if team_id != "" {
 		var diags diag.Diagnostics
-		team, err := apiclient.GetTeamById(team_id)
+		team, err := apiclient.Teams.GetTeamById(team_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -170,7 +169,7 @@ func dataSourceTeamReads(ctx context.Context, d *schema.ResourceData, m interfac
 
 		var diags diag.Diagnostics
 
-		teams, err := apiclient.GetTeams()
+		teams, err := apiclient.Teams.GetTeams()
 		if err != nil {
 			return diag.FromErr(err)
 		}

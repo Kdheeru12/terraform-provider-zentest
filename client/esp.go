@@ -1,11 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
+	"fmt"
 )
 
+type EspService service
 type Targets struct {
 	Target_type int    `json:"target_type"`
 	Target_id   string `json:"target_id"`
@@ -29,90 +29,65 @@ type EscalationPolicy struct {
 	Rules         []Rules `json:"rules"`
 }
 
-func (c *Client) CreateEscalationPolicy(team string, policy *EscalationPolicy) (*EscalationPolicy, error) {
-	j, err := json.Marshal(policy)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/escalation_policies/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *EspService) CreateEscalationPolicy(team string, policy *EscalationPolicy) (*EscalationPolicy, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/escalation_policies/", team)
+	body, err := c.client.newRequestDo("POST", path, policy)
 	if err != nil {
 		return nil, err
 	}
 	var s EscalationPolicy
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return &s, nil
 }
 
-func (c *Client) GetEscalationPolicy(team string) ([]EscalationPolicy, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/escalation_policies/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *EspService) GetEscalationPolicy(team string) ([]EscalationPolicy, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/escalation_policies/", team)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var s []EscalationPolicy
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return s, nil
 }
 
-func (c *Client) GetEscalationPolicyById(team, id string) (*EscalationPolicy, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/escalation_policies/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *EspService) GetEscalationPolicyById(team, id string) (*EscalationPolicy, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/escalation_policies/%s/", team, id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var s EscalationPolicy
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return &s, nil
 }
 
-func (c *Client) DeleteEscalationPolicy(team, id string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/escalation_policies/"+id+"/", nil)
-	if err != nil {
-		return err
-	}
-	_, err = c.doRequest(req)
+func (c *EspService) DeleteEscalationPolicy(team, id string) error {
+	path := fmt.Sprintf("/api/account/teams/%s/escalation_policies/%s/", team, id)
+	_, err := c.client.newRequestDo("DELETE", path, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) UpdateEscalationPolicy(team, id string, policy *EscalationPolicy) (*EscalationPolicy, error) {
-	j, err := json.Marshal(policy)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/escalation_policies/"+id+"/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *EspService) UpdateEscalationPolicy(team, id string, policy *EscalationPolicy) (*EscalationPolicy, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/escalation_policies/%s/", team, id)
+	body, err := c.client.newRequestDo("PUT", path, policy)
 	if err != nil {
 		return nil, err
 	}
 	var s EscalationPolicy
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}

@@ -10,16 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// func resourceTeam() *schema.Resource {
-// 	return &schema.Resource{
-// 		CreateContext: resourceOrderCreate,
-// 		ReadContext:   resourceOrderRead,
-// 		UpdateContext: resourceOrderUpdate,
-// 		DeleteContext: resourceOrderDelete,
-// 		Schema:        map[string]*schema.Schema{},
-// 	}
-// }
-
 func resourceInvite() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceInviteCreate,
@@ -60,7 +50,8 @@ func resourceInvite() *schema.Resource {
 }
 
 func resourceInviteCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	newinvite := &client.Invite{}
 	if v, ok := d.GetOk("team"); ok {
 		newinvite.Team = v.(string)
@@ -84,7 +75,7 @@ func resourceInviteCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		}
 
 	}
-	_, err := apiclient.CreateInvite(newinvite)
+	_, err := apiclient.Invite.CreateInvite(newinvite)
 	if err != nil {
 		return diag.FromErr(err)
 	}

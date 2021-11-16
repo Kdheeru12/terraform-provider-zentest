@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -103,14 +102,14 @@ func dataSourceEsp() *schema.Resource {
 }
 
 func dataSourceEspsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
 
 	team_id := d.Get("team_id").(string)
 	esp_id := d.Get("esp_id").(string)
 
 	var diags diag.Diagnostics
 	if esp_id != "" {
-		esp, err := apiclient.GetEscalationPolicyById(team_id, esp_id)
+		esp, err := apiclient.Esp.GetEscalationPolicyById(team_id, esp_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -152,7 +151,7 @@ func dataSourceEspsRead(ctx context.Context, d *schema.ResourceData, m interface
 		return diags
 	} else {
 
-		esps, err := apiclient.GetEscalationPolicy(team_id)
+		esps, err := apiclient.Esp.GetEscalationPolicy(team_id)
 		if err != nil {
 			return diag.FromErr(err)
 		}

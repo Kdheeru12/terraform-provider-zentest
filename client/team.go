@@ -1,11 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 )
+
+type TeamService service
 
 type User struct {
 	Username   string `json:"username"`
@@ -31,93 +31,67 @@ type Team struct {
 	Members       []members `json:"members"`
 }
 
-func (c *Client) CreateTeam(team *Team) (*Team, error) {
-	j, err := json.Marshal(team)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("ddd")
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *TeamService) CreateTeam(team *Team) (*Team, error) {
+	path := "/api/account/teams/"
+	body, err := c.client.newRequestDo("POST", path, team)
 	if err != nil {
 		return nil, err
 	}
 	var t Team
-	err = json.Unmarshal(body, &t)
+	err = json.Unmarshal(body.BodyBytes, &t)
 	if err != nil {
 		return nil, err
 	}
 	return &t, nil
 }
 
-func (c *Client) UpdateTeam(id string, team *Team) (*Team, error) {
-	j, err := json.Marshal(team)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("ddd")
-	req, err := http.NewRequest("PUT", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+id+"/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *TeamService) UpdateTeam(id string, team *Team) (*Team, error) {
+
+	path := fmt.Sprintf("/api/account/teams/%s/", id)
+	res, err := c.client.newRequestDo("PATCH", path, team)
 	if err != nil {
 		return nil, err
 	}
 	var t Team
-	err = json.Unmarshal(body, &t)
+	err = json.Unmarshal(res.BodyBytes, &t)
 	if err != nil {
 		return nil, err
 	}
 	return &t, nil
 }
 
-func (c *Client) GetTeamById(uniqie_id string) (*Team, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+uniqie_id, nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *TeamService) GetTeamById(uniqie_id string) (*Team, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/", uniqie_id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var t Team
-	err = json.Unmarshal(body, &t)
+	err = json.Unmarshal(body.BodyBytes, &t)
 	if err != nil {
 		return nil, err
 	}
 	return &t, nil
 }
 
-func (c *Client) GetTeams() ([]Team, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *TeamService) GetTeams() ([]Team, error) {
+	path := "/api/account/teams/"
+
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var t []Team
-	err = json.Unmarshal(body, &t)
+	err = json.Unmarshal(body.BodyBytes, &t)
 	if err != nil {
 		return nil, err
 	}
 	return t, nil
 }
 
-func (c *Client) DeleteTeam(id string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+id+"/", nil)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	_, err = c.doRequest(req)
+func (c *TeamService) DeleteTeam(id string) error {
+	path := fmt.Sprintf("/api/account/teams/%s/", id)
+	_, err := c.client.newRequestDo("DELETE", path, nil)
 	if err != nil {
 		return err
 	}

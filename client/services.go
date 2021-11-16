@@ -1,10 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
+	"fmt"
 )
+
+type Service service
 
 type Services struct {
 	Name                   string `json:"name"`
@@ -26,90 +27,69 @@ type Services struct {
 	Under_Maintenance      bool   `json:"under_maintenance"`
 }
 
-func (c *Client) CreateService(team string, service *Services) (*Services, error) {
-	j, err := json.Marshal(service)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *Service) CreateService(team string, service *Services) (*Services, error) {
+
+	path := fmt.Sprintf("/api/account/teams/%s/services/", team)
+	body, err := c.client.newRequestDo("POST", path, service)
 	if err != nil {
 		return nil, err
 	}
 	var i Services
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) GetServices(team string) ([]Services, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/", nil)
+func (c *Service) GetServices(team string) ([]Services, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/services/", team)
+
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
+
 	var i []Services
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return i, nil
 }
 
-func (c *Client) GetServicesById(team, id string) (*Services, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *Service) GetServicesById(team, id string) (*Services, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/", team, id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var i Services
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) UpdateService(team, id string, service *Services) (*Services, error) {
-	j, err := json.Marshal(service)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+id+"/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *Service) UpdateService(team, id string, service *Services) (*Services, error) {
+
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/", team, id)
+	body, err := c.client.newRequestDo("PATCH", path, service)
 	if err != nil {
 		return nil, err
 	}
 	var i Services
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) DeleteService(team string, id string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/services/"+id+"/", nil)
-	if err != nil {
-		return err
-	}
-	_, err = c.doRequest(req)
+func (c *Service) DeleteService(team string, id string) error {
+	path := fmt.Sprintf("/api/account/teams/%s/services/%s/", team, id)
+	_, err := c.client.newRequestDo("DELETE", path, nil)
 	if err != nil {
 		return err
 	}

@@ -1,10 +1,11 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
+	"fmt"
 )
+
+type ScheduleService service
 
 type Restrictions struct {
 	Duration       int    `json:"duration"`
@@ -49,90 +50,67 @@ type Schedules struct {
 	Overrides   []Overrides `json:"overrides"`
 }
 
-func (c *Client) CreateSchedule(team string, schedule *Schedules) (*Schedules, error) {
-	j, err := json.Marshal(schedule)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/schedules/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *ScheduleService) CreateSchedule(team string, schedule *Schedules) (*Schedules, error) {
+
+	path := fmt.Sprintf("/api/account/teams/%s/schedules/", team)
+	body, err := c.client.newRequestDo("POST", path, schedule)
 	if err != nil {
 		return nil, err
 	}
 	var s Schedules
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return &s, nil
 }
 
-func (c *Client) GetSchedules(team string) ([]Schedules, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/schedules/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *ScheduleService) GetSchedules(team string) ([]Schedules, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/schedules/", team)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var s []Schedules
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return s, nil
 }
 
-func (c *Client) GetScheduleByID(team, id string) (*Schedules, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/schedules/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *ScheduleService) GetScheduleByID(team, id string) (*Schedules, error) {
+	path := fmt.Sprintf("/api/account/teams/%s/schedules/%s/", team, id)
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var s Schedules
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}
 	return &s, nil
 }
 
-func (c *Client) DeleteScheduleByID(team, id string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/schedules/"+id+"/", nil)
-	if err != nil {
-		return err
-	}
-	_, err = c.doRequest(req)
+func (c *ScheduleService) DeleteScheduleByID(team, id string) error {
+	path := fmt.Sprintf("/api/account/teams/%s/schedules/%s/", team, id)
+	_, err := c.client.newRequestDo("DELETE", path, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) UpdateScheduleByID(team, id string, schedule *Schedules) (*Schedules, error) {
-	j, err := json.Marshal(schedule)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/schedules/"+id+"/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *ScheduleService) UpdateScheduleByID(team, id string, schedule *Schedules) (*Schedules, error) {
+
+	path := fmt.Sprintf("/api/account/teams/%s/schedules/%s/", team, id)
+	body, err := c.client.newRequestDo("PATCH", path, schedule)
 	if err != nil {
 		return nil, err
 	}
 	var s Schedules
-	err = json.Unmarshal(body, &s)
+	err = json.Unmarshal(body.BodyBytes, &s)
 	if err != nil {
 		return nil, err
 	}

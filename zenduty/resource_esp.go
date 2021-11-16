@@ -81,7 +81,8 @@ func resourceEsp() *schema.Resource {
 }
 
 func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_esp := &client.EscalationPolicy{}
 	rules := d.Get("rules").([]interface{})
 	var diags diag.Diagnostics
@@ -133,11 +134,7 @@ func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		new_esp.Rules[i] = new_rule
 	}
-	esp, err := apiclient.CreateEscalationPolicy(new_esp.Team, new_esp)
-	// for i, layer := range layers {
-	// 	layer_map := layer.(map[string]interface{})
-	// 	new_schedule.Layers[i].Name = layer_map["name"].(string)
-	// }
+	esp, err := apiclient.Esp.CreateEscalationPolicy(new_esp.Team, new_esp)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -148,7 +145,8 @@ func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceUpdateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_esp := &client.EscalationPolicy{}
 	id := d.Id()
 	rules := d.Get("rules").([]interface{})
@@ -201,11 +199,7 @@ func resourceUpdateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		new_esp.Rules[i] = new_rule
 	}
-	_, err := apiclient.UpdateEscalationPolicy(new_esp.Team, id, new_esp)
-	// for i, layer := range layers {
-	// 	layer_map := layer.(map[string]interface{})
-	// 	new_schedule.Layers[i].Name = layer_map["name"].(string)
-	// }
+	_, err := apiclient.Esp.UpdateEscalationPolicy(new_esp.Team, id, new_esp)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -214,28 +208,30 @@ func resourceUpdateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceDeleteEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	err := apiclient.DeleteEscalationPolicy(team_id, id)
+	err := apiclient.Esp.DeleteEscalationPolicy(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 func resourceReadEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	esp, err := apiclient.GetEscalationPolicyById(team_id, id)
+	esp, err := apiclient.Esp.GetEscalationPolicyById(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

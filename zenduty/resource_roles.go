@@ -9,16 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// func resourceTeam() *schema.Resource {
-// 	return &schema.Resource{
-// 		CreateContext: resourceOrderCreate,
-// 		ReadContext:   resourceOrderRead,
-// 		UpdateContext: resourceOrderUpdate,
-// 		DeleteContext: resourceOrderDelete,
-// 		Schema:        map[string]*schema.Schema{},
-// 	}
-// }
-
 func resourceRoles() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceRoleCreate,
@@ -55,7 +45,8 @@ func resourceRoles() *schema.Resource {
 }
 
 func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	newrole := &client.Roles{}
 
 	var diags diag.Diagnostics
@@ -75,7 +66,7 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 		newrole.Rank = v.(int)
 	}
 
-	role, err := apiclient.CreateRole(newrole.Team, newrole)
+	role, err := apiclient.Roles.CreateRole(newrole.Team, newrole)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -84,7 +75,8 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	newrole := &client.Roles{}
 	var team_id string
 	id := d.Id()
@@ -100,7 +92,7 @@ func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 	if v, ok := d.GetOk("team"); ok {
 		team_id = v.(string)
 	}
-	_, err := apiclient.UpdateRoles(team_id, newrole)
+	_, err := apiclient.Roles.UpdateRoles(team_id, newrole)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -109,12 +101,13 @@ func resourceRoleUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 
 func resourceRoleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	id := d.Id()
 	team_id := d.Get("team").(string)
 	var diags diag.Diagnostics
 
-	err := apiclient.DeleteRole(team_id, id)
+	err := apiclient.Roles.DeleteRole(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

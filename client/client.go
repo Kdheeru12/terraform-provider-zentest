@@ -3,164 +3,160 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
-// func main() {
-// 	client := Client{Token: "3b44da5b6cc076b459c45a6256b2e0e8b03af91c"}
-// 	task, err := client.GetEscalationPolicy("dd518f4d-dbce-4ad2-b5be-ceff597c67f8")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	fmt.Printf("%+v\n", task)
+const (
+	defaultBaseURL = "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com"
+)
 
-// }
-type EmailAccounts struct {
-	First_Name string `json:"first_name"`
-	Last_Name  string `json:"last_name"`
-	Email      string `json:"email"`
-	Role       int    `json:"role"`
+type service struct {
+	client *Client
 }
 
-type Invite struct {
-	EmailAccounts []EmailAccounts `json:"email_accounts"`
-	Team          string          `json:"team"`
+type Config struct {
+	BaseURL    string
+	HTTPClient *http.Client
+	Token      string
 }
 
-type InviteResponse struct {
-	Unique_Id    string `json:"unique_id"`
-	Team         string `json:"team"`
-	User         User   `json:"user"`
-	Joining_Date string `json:"joining_date"`
-	Role         int    `json:"role"`
+type Client struct {
+	baseURL      *url.URL
+	client       *http.Client
+	Config       *Config
+	Teams        *TeamService
+	Services     *Service
+	Schedules    *ScheduleService
+	Roles        *RoleService
+	Integrations *IntegrationServerice
+	Incidents    *IncidentService
+	Esp          *EspService
+	Members      *MemberService
+	Invite       *InviteService
 }
 
-type Member struct {
-	Unique_Id    string `json:"unique_id"`
-	Team         string `json:"team"`
-	User         string `json:"user"`
-	Joining_Date string `json:"joining_date"`
-	Role         int    `json:"role"`
+type Response struct {
+	Response  *http.Response
+	BodyBytes []byte
 }
 
-type MemberResponse struct {
-	Unique_Id    string `json:"unique_id"`
-	Team         string `json:"team"`
-	User         User   `json:"user"`
-	Joining_Date string `json:"joining_date"`
-	Role         int    `json:"role"`
+func NewClient(config *Config) (*Client, error) {
+	if config.HTTPClient == nil {
+		config.HTTPClient = http.DefaultClient
+	}
+
+	if config.BaseURL == "" {
+		config.BaseURL = defaultBaseURL
+	}
+
+	baseURL, err := url.Parse(config.BaseURL)
+	if err != nil {
+		return nil, err
+	}
+
+	c := &Client{
+		baseURL: baseURL,
+		client:  config.HTTPClient,
+		Config:  config,
+	}
+	c.Teams = &TeamService{c}
+	c.Services = &Service{c}
+	c.Schedules = &ScheduleService{c}
+	c.Roles = &RoleService{c}
+	c.Integrations = &IntegrationServerice{c}
+	c.Incidents = &IncidentService{c}
+	c.Esp = &EspService{c}
+	c.Members = &MemberService{c}
+	c.Invite = &InviteService{c}
+
+	return c, nil
+
 }
 
-func (c *Client) CreateInvite(invite *Invite) ([]InviteResponse, error) {
-	j, err := json.Marshal(invite)
+func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
+	rel := &url.URL{Path: path}
+	u := c.baseURL.ResolveReference(rel)
+
+	var buf []byte
+	if body != nil {
+		buf, _ = json.Marshal(body)
+	}
+
+	req, err := http.NewRequest(method, u.String(), bytes.NewBuffer(buf))
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/invite/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	var s []InviteResponse
-	err = json.Unmarshal(body, &s)
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("token %s", c.Config.Token))
+
+	return req, nil
 }
 
-// http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/dd518f4d-dbce-4ad2-b5be-ceff597c67f8/members/3f16016e-7d53-4153-bda0-1c6415fc5ff0/
-
-func (c *Client) CreateTeamMember(team string, member *Member) (*Member, error) {
-	j, err := json.Marshal(member)
+func (c *Client) newRequestDo(method, path string, body interface{}) (*Response, error) {
+	req, err := c.newRequest(method, path, body)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/members/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	var s Member
-	err = json.Unmarshal(body, &s)
-	if err != nil {
-		return nil, err
-	}
-	return &s, nil
+	return c.doRequest(req)
 }
 
-func (c *Client) UpdateTeamMember(member *Member) (*Member, error) {
-	j, err := json.Marshal(member)
+func (c *Client) doRequest(req *http.Request) (*Response, error) {
+	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+member.Team+"/members/"+member.Unique_Id+"/", bytes.NewBuffer(j))
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
+	defer res.Body.Close()
+	response := &Response{
+		Response:  res,
+		BodyBytes: body,
 	}
-	var s Member
-	err = json.Unmarshal(body, &s)
-	if err != nil {
-		return nil, err
+	if err := c.checkResponse(response); err != nil {
+		return response, err
 	}
-	return &s, nil
+
+	// if v != nil {
+	// 	if err := c.DecodeJSON(response, v); err != nil {
+	// 		return response, err
+	// 	}
+	// }
+
+	return response, nil
+
 }
 
-func (c *Client) DeleteTeamMember(team string, member string) error {
-	req, err := http.NewRequest("DELETE", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/members/"+member+"/", nil)
-	if err != nil {
-		return err
+func (c *Client) DecodeJSON(res *Response, v interface{}) error {
+	return json.Unmarshal(res.BodyBytes, v)
+}
+
+func (c *Client) checkResponse(res *Response) error {
+	if res.Response.StatusCode >= 200 && res.Response.StatusCode <= 299 {
+		return nil
 	}
-	_, err = c.doRequest(req)
+
+	return c.decodeErrorResponse(res)
+}
+
+func (c *Client) decodeErrorResponse(res *Response) error {
+
+	v := &errorResponse{Error: &Error{ErrorResponse: res}}
+	if err := c.DecodeJSON(res, v); err != nil {
+		return fmt.Errorf("%s API call to %s failed: %v", res.Response.Request.Method, res.Response.Request.URL.String(), res.Response.Status)
+	}
+
+	return v.Error
+}
+
+func CheckError(err error) error {
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func (c *Client) GetTeamMembers(team string) ([]MemberResponse, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/members/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	var s []MemberResponse
-	err = json.Unmarshal(body, &s)
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-func (c *Client) GetTeamMembersByID(team, id string) (*MemberResponse, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/account/teams/"+team+"/members/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	var s MemberResponse
-	err = json.Unmarshal(body, &s)
-	if err != nil {
-		return nil, err
-	}
-	return &s, nil
 }

@@ -1,10 +1,10 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
 )
+
+type IncidentService service
 
 type Incident struct {
 	Service          string `json:"service"`
@@ -75,78 +75,58 @@ type IncidentStatus struct {
 	Status int `json:"status"`
 }
 
-func (c *Client) CreateIncident(incident *Incident) (*Incidents, error) {
-	j, err := json.Marshal(incident)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/incidents/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *IncidentService) CreateIncident(incident *Incident) (*Incidents, error) {
+	path := "/api/incidents/"
+
+	body, err := c.client.newRequestDo("POST", path, incident)
 	if err != nil {
 		return nil, err
 	}
 	var i Incidents
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) UpdateIncident(id string, incident *IncidentStatus) (*Incidents, error) {
-	j, err := json.Marshal(incident)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("PATCH", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/incidents/"+id+"/", bytes.NewBuffer(j))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	body, err := c.doRequest(req)
+func (c *IncidentService) UpdateIncident(id string, incident *IncidentStatus) (*Incidents, error) {
+	path := "/api/incidents/" + id + "/"
+
+	body, err := c.client.newRequestDo("PATCH", path, incident)
 	if err != nil {
 		return nil, err
 	}
 	var i Incidents
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) GetIncidents() (*IncidentPagination, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/incidents/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *IncidentService) GetIncidents() (*IncidentPagination, error) {
+	path := "/api/incidents/"
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var i IncidentPagination
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}
 	return &i, nil
 }
 
-func (c *Client) GetIncidentByNumber(id string) (*Incidents, error) {
-	req, err := http.NewRequest("GET", "http://zenduty-beanstalk-stage-dev.us-east-1.elasticbeanstalk.com/api/incidents/"+id+"/", nil)
-	if err != nil {
-		return nil, err
-	}
-	body, err := c.doRequest(req)
+func (c *IncidentService) GetIncidentByNumber(id string) (*Incidents, error) {
+	path := "/api/incidents/" + id + "/"
+	body, err := c.client.newRequestDo("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var i Incidents
-	err = json.Unmarshal(body, &i)
+	err = json.Unmarshal(body.BodyBytes, &i)
 	if err != nil {
 		return nil, err
 	}

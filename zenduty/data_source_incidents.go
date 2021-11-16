@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -198,10 +197,10 @@ func dataSourceIncidents() *schema.Resource {
 }
 
 func dataSourceIncidentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
 
 	var diags diag.Diagnostics
-	incidents, err := apiclient.GetIncidents()
+	incidents, err := apiclient.Incidents.GetIncidents()
 	if err != nil {
 		return diag.FromErr(err)
 	}

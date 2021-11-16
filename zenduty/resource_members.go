@@ -33,7 +33,8 @@ func resourceMembers() *schema.Resource {
 }
 
 func resourceMemberCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_members := &client.Member{}
 	role := d.Get("role").(int)
 	if role == 0 {
@@ -50,7 +51,7 @@ func resourceMemberCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		new_members.User = v.(string)
 	}
 
-	member, err := apiclient.CreateTeamMember(new_members.Team, new_members)
+	member, err := apiclient.Members.CreateTeamMember(new_members.Team, new_members)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -59,7 +60,8 @@ func resourceMemberCreate(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceMemberUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_members := &client.Member{}
 	id := d.Id()
 	new_members.Unique_Id = id
@@ -73,7 +75,7 @@ func resourceMemberUpdate(Ctx context.Context, d *schema.ResourceData, m interfa
 	if v, ok := d.GetOk("team"); ok {
 		new_members.Team = v.(string)
 	}
-	_, err := apiclient.UpdateTeamMember(new_members)
+	_, err := apiclient.Members.UpdateTeamMember(new_members)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -82,11 +84,12 @@ func resourceMemberUpdate(Ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceMemberDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	id := d.Id()
 	team := d.Get("team").(string)
 	var diags diag.Diagnostics
-	err := apiclient.DeleteTeamMember(team, id)
+	err := apiclient.Members.DeleteTeamMember(team, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -94,11 +97,12 @@ func resourceMemberDelete(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceMemberRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	id := d.Id()
 	team := d.Get("team").(string)
 	var diags diag.Diagnostics
-	member, err := apiclient.GetTeamMembersByID(team, id)
+	member, err := apiclient.Members.GetTeamMembersByID(team, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -46,7 +46,8 @@ func resourceIncidents() *schema.Resource {
 }
 
 func resourceIncidentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_incident := &client.Incident{}
 	var diags diag.Diagnostics
 	summary := d.Get("summary").(string)
@@ -66,7 +67,7 @@ func resourceIncidentsCreate(ctx context.Context, d *schema.ResourceData, m inte
 		new_incident.Service = v.(string)
 	}
 
-	incident, err := apiclient.CreateIncident(new_incident)
+	incident, err := apiclient.Incidents.CreateIncident(new_incident)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -77,10 +78,11 @@ func resourceIncidentsCreate(ctx context.Context, d *schema.ResourceData, m inte
 func resourceIncidentUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	status := d.Get("status").(int)
 	if status != 0 {
-		apiclient := m.(*client.Client)
+		apiclient, _ := m.(*Config).Client()
+
 		id := d.Id()
 		new_status := &client.IncidentStatus{}
-		_, err := apiclient.UpdateIncident(id, new_status)
+		_, err := apiclient.Incidents.UpdateIncident(id, new_status)
 		if err != nil {
 			return diag.FromErr(err)
 		}

@@ -61,7 +61,8 @@ func resourceServices() *schema.Resource {
 }
 
 func resourceCreateServices(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_service := &client.Services{}
 	team_id := d.Get("team_id").(string)
 	if team_id == "" {
@@ -96,7 +97,7 @@ func resourceCreateServices(Ctx context.Context, d *schema.ResourceData, m inter
 	}
 
 	var diags diag.Diagnostics
-	service, err := apiclient.CreateService(team_id, new_service)
+	service, err := apiclient.Services.CreateService(team_id, new_service)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -106,7 +107,8 @@ func resourceCreateServices(Ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceUpdateServices(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_service := &client.Services{}
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
@@ -141,7 +143,7 @@ func resourceUpdateServices(Ctx context.Context, d *schema.ResourceData, m inter
 		new_service.Team_Priority = v.(string)
 	}
 
-	_, err := apiclient.UpdateService(team_id, id, new_service)
+	_, err := apiclient.Services.UpdateService(team_id, id, new_service)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -149,28 +151,30 @@ func resourceUpdateServices(Ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceDeleteServices(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	err := apiclient.DeleteService(team_id, id)
+	err := apiclient.Services.DeleteService(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 func resourceReadServices(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	service, err := apiclient.GetServicesById(team_id, id)
+	service, err := apiclient.Services.GetServicesById(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

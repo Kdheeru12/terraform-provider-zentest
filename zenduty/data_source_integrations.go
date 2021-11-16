@@ -2,7 +2,6 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -86,14 +85,14 @@ func dataSourceIntegrations() *schema.Resource {
 }
 
 func dataSourceIncidentReads(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
 
 	teamID := d.Get("team_id").(string)
 	serviceID := d.Get("service_id").(string)
 	integrationID := d.Get("integration_id").(string)
 	var diags diag.Diagnostics
 	if integrationID != "" {
-		integration, err := apiclient.GetIntegrationByID(teamID, serviceID, integrationID)
+		integration, err := apiclient.Integrations.GetIntegrationByID(teamID, serviceID, integrationID)
 		if err != nil {
 			return diag.Errorf("Error reading integrations: %s", err)
 		}
@@ -132,7 +131,7 @@ func dataSourceIncidentReads(ctx context.Context, d *schema.ResourceData, m inte
 
 	} else {
 
-		integrations, err := apiclient.GetIntegrations(teamID, serviceID)
+		integrations, err := apiclient.Integrations.GetIntegrations(teamID, serviceID)
 		if err != nil {
 			return diag.Errorf("Error reading integrations: %s", err)
 		}

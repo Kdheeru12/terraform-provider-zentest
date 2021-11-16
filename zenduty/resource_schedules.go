@@ -65,7 +65,8 @@ func resourceSchedules() *schema.Resource {
 }
 
 func resourceCreateSchedule(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_schedule := &client.Schedules{}
 	var diags diag.Diagnostics
 	layers := d.Get("layers").([]interface{})
@@ -93,7 +94,7 @@ func resourceCreateSchedule(Ctx context.Context, d *schema.ResourceData, m inter
 	// 	new_schedule.Layers[i].Name = layer_map["name"].(string)
 	// }
 
-	schedule, err := apiclient.CreateSchedule(new_schedule.Team, new_schedule)
+	schedule, err := apiclient.Schedules.CreateSchedule(new_schedule.Team, new_schedule)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -103,7 +104,8 @@ func resourceCreateSchedule(Ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceUpdateSchedule(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	new_schedule := &client.Schedules{}
 	team_id := d.Get("team_id").(string)
 	layers := d.Get("layers").([]interface{})
@@ -128,7 +130,7 @@ func resourceUpdateSchedule(Ctx context.Context, d *schema.ResourceData, m inter
 	new_schedule.Layers = make([]client.Layers, len(layers))
 	new_schedule.Overrides = make([]client.Overrides, len(overrides))
 
-	_, err := apiclient.UpdateScheduleByID(team_id, id, new_schedule)
+	_, err := apiclient.Schedules.UpdateScheduleByID(team_id, id, new_schedule)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -136,28 +138,30 @@ func resourceUpdateSchedule(Ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceDeleteSchedule(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	err := apiclient.DeleteScheduleByID(team_id, id)
+	err := apiclient.Schedules.DeleteScheduleByID(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
 }
 func resourceReadSchedule(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient := m.(*client.Client)
+	apiclient, _ := m.(*Config).Client()
+
 	team_id := d.Get("team_id").(string)
 	id := d.Id()
 	if team_id == "" {
 		return diag.FromErr(errors.New("team_id is required"))
 	}
 	var diags diag.Diagnostics
-	service, err := apiclient.GetScheduleByID(team_id, id)
+	service, err := apiclient.Schedules.GetScheduleByID(team_id, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
