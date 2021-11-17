@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"terraform-provider-zenduty/client"
+
+	"github.com/Kdheeru12/zenduty-test/client"
 )
 
 type Config struct {

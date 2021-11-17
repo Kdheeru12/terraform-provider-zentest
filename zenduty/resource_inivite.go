@@ -2,8 +2,9 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
 	"time"
+
+	"github.com/Kdheeru12/zenduty-test/client"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 

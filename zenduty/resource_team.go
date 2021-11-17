@@ -2,10 +2,13 @@ package zenduty
 
 import (
 	"context"
-	"terraform-provider-zenduty/client"
+	"time"
+
+	"github.com/Kdheeru12/zenduty-test/client"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -34,12 +37,28 @@ func resourceTeamCreate(ctx context.Context, d *schema.ResourceData, m interface
 		newteam.Name = v.(string)
 
 	}
-	task, err := apiclient.Teams.CreateTeam(newteam)
-	if err != nil {
-		return diag.FromErr(err)
+	retryErr := resource.Retry(1*time.Minute, func() *resource.RetryError {
+
+		task, err := apiclient.Teams.CreateTeam(newteam)
+		if err != nil {
+			return resource.RetryableError(err)
+		} else if task != nil {
+			d.SetId(task.Unique_Id)
+		}
+		return nil
+	})
+	if retryErr != nil {
+		time.Sleep(2 * time.Second)
+		return diag.FromErr(retryErr)
 	}
-	d.SetId(task.Unique_Id)
 	return diags
+
+	// task, err := apiclient.Teams.CreateTeam(newteam)
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+	// d.SetId(task.Unique_Id)
+	// return diags
 }
 
 func resourceTeamUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -53,10 +72,24 @@ func resourceTeamUpdate(Ctx context.Context, d *schema.ResourceData, m interface
 		newteam.Name = v.(string)
 
 	}
-	_, err := apiclient.Teams.UpdateTeam(id, newteam)
-	if err != nil {
-		return diag.FromErr(err)
+	retryErr := resource.Retry(1*time.Minute, func() *resource.RetryError {
+
+		task, err := apiclient.Teams.UpdateTeam(id, newteam)
+		if err != nil {
+			return resource.RetryableError(err)
+		} else if task != nil {
+			d.SetId(task.Unique_Id)
+		}
+		return nil
+	})
+	if retryErr != nil {
+		time.Sleep(2 * time.Second)
+		return diag.FromErr(retryErr)
 	}
+	// _, err := apiclient.Teams.UpdateTeam(id, newteam)
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
 	return diags
 
 }
