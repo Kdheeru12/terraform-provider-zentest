@@ -1,4 +1,4 @@
-module terraform-provider-zendutytest
+module terraform-provider-zentest
 
 go 1.17
 

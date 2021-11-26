@@ -1,7 +1,7 @@
 package main
 
 import (
-	"terraform-provider-zendutytest/zenduty"
+	"terraform-provider-zentest/zenduty"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
