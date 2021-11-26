@@ -12,19 +12,19 @@ func Provider() *schema.Provider {
 		Schema: map[string]*schema.Schema{
 			"token": &schema.Schema{
 				Type:        schema.TypeString,
-				Description: "Your Todoist API key",
+				Description: "Your Zenduty API key",
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("TODOIST_API_KEY", nil),
+				DefaultFunc: schema.EnvDefaultFunc("ZENDUTY_API_KEY", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"zenduty_team":         resourceTeam(),
+			"zenduty_teams":        resourceTeam(),
 			"zenduty_roles":        resourceRoles(),
 			"zenduty_services":     resourceServices(),
 			"zenduty_integrations": resourceIntegrations(),
 			"zenduty_schedules":    resourceSchedules(),
 			"zenduty_esp":          resourceEsp(),
-			"zenduty_incindents":   resourceIncidents(),
+			"zenduty_incidents":    resourceIncidents(),
 			"zenduty_invite":       resourceInvite(),
 			"zenduty_member":       resourceMembers(),
 		},
