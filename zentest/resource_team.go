@@ -30,7 +30,7 @@ func resourceTeam() *schema.Resource {
 func resourceTeamCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiclient, _ := m.(*Config).Client()
 
-	newteam := &client.Team{}
+	newteam := &client.CreateTeams{}
 
 	var diags diag.Diagnostics
 	if v, ok := d.GetOk("name"); ok {
@@ -64,7 +64,7 @@ func resourceTeamCreate(ctx context.Context, d *schema.ResourceData, m interface
 func resourceTeamUpdate(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiclient, _ := m.(*Config).Client()
 
-	newteam := &client.Team{}
+	newteam := &client.CreateTeams{}
 	id := d.Id()
 	newteam.Unique_Id = id
 	var diags diag.Diagnostics

@@ -2,6 +2,7 @@ package zentest
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Kdheeru12/zenduty-test/client"
 
@@ -44,7 +45,7 @@ func resourceIntegrations() *schema.Resource {
 func resourceIntegrationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiclient, _ := m.(*Config).Client()
 
-	newIntegration := &client.Integration{}
+	newIntegration := &client.IntegrationCreate{}
 	var diags diag.Diagnostics
 	team_id := d.Get("team_id").(string)
 	service_id := d.Get("service_id").(string)
@@ -74,8 +75,22 @@ func resourceIntegrationUpdate(Ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceIntegrationDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	apiclient, _ := m.(*Config).Client()
 
+	id := d.Id()
+	team_id := d.Get("team_id").(string)
+	service_id := d.Get("service_id").(string)
 	var diags diag.Diagnostics
+	if team_id == "" {
+		return diag.FromErr(errors.New("team_id is required"))
+	}
+	if service_id == "" {
+		return diag.FromErr(errors.New("service_id is required"))
+	}
+	err := apiclient.Integrations.DeleteIntegration(team_id, service_id, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	return diags
 }
@@ -93,5 +108,8 @@ func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(err)
 	}
 	d.Set("name", integration.Name)
+	d.Set("application", integration.Application)
+	d.Set("summary", integration.Summary)
+
 	return diags
 }

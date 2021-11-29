@@ -81,12 +81,9 @@ func resourceEsp() *schema.Resource {
 	}
 }
 
-func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	apiclient, _ := m.(*Config).Client()
-
+func CreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) *client.EscalationPolicy {
 	new_esp := &client.EscalationPolicy{}
 	rules := d.Get("rules").([]interface{})
-	var diags diag.Diagnostics
 	if v, ok := d.GetOk("name"); ok {
 		new_esp.Name = v.(string)
 	}
@@ -135,6 +132,16 @@ func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		new_esp.Rules[i] = new_rule
 	}
+	return new_esp
+
+}
+
+func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	apiclient, _ := m.(*Config).Client()
+
+	var diags diag.Diagnostics
+	new_esp := CreateEsp(Ctx, d, m)
+
 	esp, err := apiclient.Esp.CreateEscalationPolicy(new_esp.Team, new_esp)
 
 	if err != nil {
@@ -148,58 +155,10 @@ func resourceCreateEsp(Ctx context.Context, d *schema.ResourceData, m interface{
 func resourceUpdateEsp(Ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	apiclient, _ := m.(*Config).Client()
 
-	new_esp := &client.EscalationPolicy{}
+	new_esp := CreateEsp(Ctx, d, m)
 	id := d.Id()
-	rules := d.Get("rules").([]interface{})
 	var diags diag.Diagnostics
-	if v, ok := d.GetOk("name"); ok {
-		new_esp.Name = v.(string)
-	}
-	if v, ok := d.GetOk("summary"); ok {
-		new_esp.Summary = v.(string)
-	}
-	if v, ok := d.GetOk("description"); ok {
-		new_esp.Description = v.(string)
-	}
-	if v, ok := d.GetOk("team_id"); ok {
-		new_esp.Team = v.(string)
-	}
-	if v, ok := d.GetOk("repeat_policy"); ok {
-		new_esp.Repeat_Policy = v.(int)
-	}
-	if v, ok := d.GetOk("move_to_next"); ok {
-		new_esp.Move_To_Next = v.(bool)
-	}
-	new_esp.Rules = make([]client.Rules, len(rules))
-	for i, rule := range rules {
-		rule_map := rule.(map[string]interface{})
-		new_rule := client.Rules{}
-		if v, ok := rule_map["delay"]; ok {
-			new_rule.Delay = v.(int)
-		}
-		if v, ok := rule_map["position"]; ok {
-			new_rule.Position = v.(int)
-		}
-		if v, ok := rule_map["unique_id"]; ok {
-			new_rule.Unique_Id = v.(string)
-		}
-		if v, ok := rule_map["targets"]; ok {
-			targets := v.([]interface{})
-			new_rule.Targets = make([]client.Targets, len(targets))
-			for j, target := range targets {
-				target_map := target.(map[string]interface{})
-				new_target := client.Targets{}
-				if v, ok := target_map["target_type"]; ok {
-					new_target.Target_type = v.(int)
-				}
-				if v, ok := target_map["target_id"]; ok {
-					new_target.Target_id = v.(string)
-				}
-				new_rule.Targets[j] = new_target
-			}
-		}
-		new_esp.Rules[i] = new_rule
-	}
+
 	_, err := apiclient.Esp.UpdateEscalationPolicy(new_esp.Team, id, new_esp)
 
 	if err != nil {

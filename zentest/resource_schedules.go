@@ -90,11 +90,6 @@ func resourceCreateSchedule(Ctx context.Context, d *schema.ResourceData, m inter
 	new_schedule.Layers = make([]client.Layers, len(layers))
 	new_schedule.Overrides = make([]client.Overrides, len(overrides))
 
-	// for i, layer := range layers {
-	// 	layer_map := layer.(map[string]interface{})
-	// 	new_schedule.Layers[i].Name = layer_map["name"].(string)
-	// }
-
 	schedule, err := apiclient.Schedules.CreateSchedule(new_schedule.Team, new_schedule)
 	if err != nil {
 		return diag.FromErr(err)
@@ -167,5 +162,7 @@ func resourceReadSchedule(Ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 	d.Set("name", service.Name)
+	d.Set("summary", service.Summary)
+	d.Set("description", service.Description)
 	return diags
 }

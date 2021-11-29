@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	Token string
+	Token   string
+	BaseURL string
 }
 
 const invalidCreds = `
@@ -25,7 +26,7 @@ func (c *Config) Client() (*client.Client, error) {
 	httpClient = http.DefaultClient
 
 	config := &client.Config{
-		BaseURL:    "",
+		BaseURL:    c.BaseURL,
 		HTTPClient: httpClient,
 		Token:      c.Token,
 	}

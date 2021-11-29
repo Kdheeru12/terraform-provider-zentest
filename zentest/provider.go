@@ -16,6 +16,11 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ZENDUTY_API_KEY", nil),
 			},
+			"base_url": &schema.Schema{
+				Type:        schema.TypeString,
+				Description: "The base url of the Zenduty",
+				Optional:    true,
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"zenduty_teams":        resourceTeam(),
@@ -44,10 +49,12 @@ func Provider() *schema.Provider {
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	token := d.Get("token").(string)
+	baseUrl := d.Get("base_url").(string)
 	var diags diag.Diagnostics
 	if token != "" {
 		client := Config{
-			Token: token,
+			Token:   token,
+			BaseURL: baseUrl,
 		}
 		return &client, diags
 	}
