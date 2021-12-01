@@ -23,8 +23,8 @@ description: |-
 
 ### Optional
 
-- **collation** (String)
-- **collation_time** (String)
+- **collation** (Number)
+- **collation_time** (Number)
 - **description** (String)
 - **id** (String) The ID of this resource.
 - **sla** (String)

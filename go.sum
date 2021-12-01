@@ -40,6 +40,8 @@ github.com/Kdheeru12/zenduty-test v0.1.2 h1:PAgNl9CkpJPM4h5TUdD49NRGm/LXMGT2JnfN
 github.com/Kdheeru12/zenduty-test v0.1.2/go.mod h1:AGpdVF88uQvIYkNu5BQcbPkwPZX6egn34tRZd08mizo=
 github.com/Kdheeru12/zenduty-test v0.1.3 h1:hjhEmP4mYpbDWnMGgfTTLmWDycImaS0HBcJ9iaTb0jQ=
 github.com/Kdheeru12/zenduty-test v0.1.3/go.mod h1:AGpdVF88uQvIYkNu5BQcbPkwPZX6egn34tRZd08mizo=
+github.com/Kdheeru12/zenduty-test v0.1.4 h1:ym4zqqy2gFg+k/Wn5qKMKv6DJ2sjiN0J93sVht+vXnY=
+github.com/Kdheeru12/zenduty-test v0.1.4/go.mod h1:AGpdVF88uQvIYkNu5BQcbPkwPZX6egn34tRZd08mizo=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/Masterminds/sprig v2.22.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuNhlNS5hqE0NB0E6fgfo2Br3o=

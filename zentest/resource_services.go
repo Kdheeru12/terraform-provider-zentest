@@ -38,11 +38,11 @@ func resourceServices() *schema.Resource {
 				Optional: true,
 			},
 			"collation": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Optional: true,
 			},
 			"collation_time": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Optional: true,
 			},
 			"sla": {

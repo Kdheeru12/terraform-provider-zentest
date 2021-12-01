@@ -18,3 +18,7 @@ description: |-
 ### Required
 
 - **token** (String) Your Zenduty API key
+
+### Optional
+
+- **base_url** (String) The base url of the Zenduty
